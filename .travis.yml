@@ -1,5 +1,12 @@
 language: C
 
+compiler:
+  - gcc
+
+env:
+  global:
+   - secure: "hniWqjqlBGlm1kHEOljHtQWDrGsNoU+X6U3RIfQwIbxknhnbivskaS7Z4yLAgEeHGR+eQqTV1b8IoreaHiE8VSeVdp6gGDvNfGZziLE3l24o598wXy66BCcB4sCs2C/5TAiaQ3SZPPo4Drcg49KIOMqAmuxHRRjv5NmYt2ViZmCUyo32cjggC34sOY64K245Ca4zghLRqalgQ2IB41D/lxc6dNv1/XSWClARmdNuETWpdZe+61p8A9fXWlXteeRXFRgSOj4q2AQ0BR6bABd+/8N6NnCMqG57UmzdPSeNeWYrUoRCqzno7khoEZGD9d3PVFw/KllMwGaJ1rnU2js9MPOE557/X49cfIoe6l686oNE8lTRn+uGU5gj9qLdg5PLoLV3h5qPqYsBequmEd+LKxjk8b+3bla6/Mbal+NhsV3hMWCxVPg3cafpeaOUjaY6qwXQJzOwwuZ9cjvXFlYBi92CfaQIFtD3LexQG45E3dhMjy5O9F7KvwJat4ZLrodoyDjlTpMeoUZaBNGVnqp1vjvrMpZYURYGSydybzGNRepjCkcy6uTbLltLa3cROpRnAUXHYnyV+7b5AOb9XookaOO8zWL0nc5vUxAhc28MSIfRbP6uz0FZEXOUTN8sF51Vjbk+7p1FFdqEdOHwppq9CgnAPjFVI5AYyhUpFF/cAKU="
+
 addons:
   apt:
     packages:
@@ -13,8 +20,17 @@ addons:
     - libtool
     - autoconf 
     - jq
+  coverity_scan:
+    project:
+      name: "volcaos/ptarmigan"
+      description: "<Your project description here>"
+    notification_email: takeshi@volcaos.jp
+    build_command_prepend: ""
+    build_command: "make full"
+    branch_pattern: coverity_scan
 
-install: true
+before_install:
+  - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
 
 script:
   - make full
