@@ -60,7 +60,6 @@ typedef enum {
 
     //内部用
     INNER_SEND_ANNO_SIGNS,          ///< announcement_signatures送信要求
-    INNER_SEND_ANNOUNCEMENT,        ///< announcement送信要求
 } recv_proc_t;
 
 
@@ -84,8 +83,7 @@ typedef struct lnapp_conf_t {
     ln_self_t       *p_self;                ///< channelのコンテキスト
     ln_establish_t  *p_establish;           ///< Establish用のワーク領域
 
-    uint32_t        last_cnl_anno_sent;     ///< 最後に送信したchannel_announcementのEPOCH TIME
-    uint32_t        last_node_anno_sent;    ///< 最後に送信したnode_announcementのEPOCH TIME
+    bool            initial_routing_sync;   ///< init.localfeaturesのinitial_routing_sync
     uint8_t         ping_counter;           ///< 無送受信時にping送信するカウンタ(カウントアップ)
     bool            funding_waiting;        ///< true:funding_txの安定待ち
     uint32_t        funding_confirm;        ///< funding_txのconfirmation数
@@ -110,6 +108,10 @@ typedef struct lnapp_conf_t {
 
     //fulfillキュー
     queue_fulfill_t *p_fulfill_queue;
+
+    //last send announcement
+    uint64_t        last_anno_cnl;                      ///< 最後にannouncementしたchannel
+    uint8_t         last_anno_node[UCOIN_SZ_PUBKEY];    ///< 最後にannouncementしたnode
 
     int             err;            ///< last error
     char            *p_errstr;      ///< last error string
@@ -206,7 +208,7 @@ bool lnapp_is_looping(const lnapp_conf_t *pAppConf);
 
 
 /** [lnapp]初期化済み状態取得
- * 
+ *
  */
 bool lnapp_is_inited(const lnapp_conf_t *pAppConf);
 
